@@ -19,7 +19,7 @@ export async function fetcher(url: string, ctx: NextPageContext) {
 
     if (resp.status === 401 && ctx.req) {
         ctx.res?.writeHead(302, {
-            Location: "http://localhost:3000/login",
+            Location: `${process.env.NEXT_PUBLIC_SELF_ENDPOINT}/login`,
         });
         ctx.res?.end();
         return;
