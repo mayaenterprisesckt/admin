@@ -53,7 +53,6 @@ function LoginPage() {
         setCookie(null, "token", respp.token, {
             maxAge: 30 * 24 * 60 * 60,
             path: "/",
-            httpOnly: true,
             sameSite: "strict",
         });
 
