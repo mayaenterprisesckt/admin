@@ -92,6 +92,9 @@ function ForgotPass({ title }: forgotPassProps) {
                                             placeholder="your-email@example.com"
                                             label="Email"
                                             type="email"
+                                            passwordField={false}
+
+                                            // type={"email"}
                                         />
                                     </Stack>
                                     <Stack spacing={6} maxW={"lg"}>

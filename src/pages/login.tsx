@@ -80,11 +80,13 @@ function LoginPage() {
                                         label="Username"
                                         minLength={3}
                                     />
+
                                     <InputField
                                         name="password"
                                         placeholder="password"
                                         label="Password"
-                                        type="password"
+                                        // type={"password"}
+                                        passwordField={true}
                                         required
                                         minLength={6}
                                     />

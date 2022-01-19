@@ -79,7 +79,7 @@ function ResetPasswordForm({ token }: { token: string }): JSX.Element {
                                     name="password"
                                     placeholder="password"
                                     label="Password"
-                                    type="password"
+                                    passwordField={true}
                                     required
                                     minLength={6}
                                 />
@@ -87,7 +87,7 @@ function ResetPasswordForm({ token }: { token: string }): JSX.Element {
                                     name="password2"
                                     placeholder="Confirm Password"
                                     label="Password2"
-                                    type="password2"
+                                    passwordField={true}
                                     required
                                     minLength={6}
                                 />
