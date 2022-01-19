@@ -1,85 +1,133 @@
-import {
-    Button,
-    Flex,
-    FormControl,
-    FormLabel,
-    Heading,
-    Input,
-    Stack,
-    useColorModeValue,
-} from "@chakra-ui/react";
+import { InputField } from "@/components/From/InputField";
+import ForgotPass from "@/containers/ForgotPass";
+import { Button, Flex, Heading, Stack, useColorModeValue } from "@chakra-ui/react";
+import { Formik, Form } from "formik";
+import { NextPageContext } from "next";
 import { useRouter } from "next/router";
-import { useRef } from "react";
+import { useState } from "react";
 
-function ResetPasswordForm(): JSX.Element {
+function ResetPasswordForm({ token }: { token: string }): JSX.Element {
     const Bgvalue = useColorModeValue("#FFFFFF", "primaryDark");
     const router = useRouter();
 
-    const passwordRef = useRef<HTMLInputElement>(null);
-    const cpasswordRef = useRef<HTMLInputElement>(null);
-    console.log(router.query?.token);
-
-    async function handelSubmit(event: React.FormEvent<HTMLFormElement>) {
-        event.preventDefault();
-
-        const res = await fetch(
-            `${process.env.NEXT_PUBLIC_SERVER_ENDPOINT2}/auth/api/reset-password-now`,
-            {
-                method: "POST",
-                credentials: "include",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    resetPasswordToken: router.query?.token,
-                    password: passwordRef.current?.value,
-                }),
-            }
-        );
-        const json = await res.json();
-        console.log(json);
-        // router.push("/");
-    }
+    const [Message, setMessage] = useState("");
+    const [link, setlink] = useState(false);
     return (
         <Flex minH={"100vh"} align={"center"} justify={"center"} bg={Bgvalue}>
-            <form onSubmit={handelSubmit}>
-                <Stack
-                    spacing={4}
-                    w={"full"}
-                    maxW={"md"}
-                    bg={Bgvalue}
-                    rounded={"xl"}
-                    boxShadow={"lg"}
-                    p={6}
-                    my={12}
-                >
-                    <Heading lineHeight={1.1} fontSize={{ base: "2xl", md: "3xl" }}>
-                        Enter new password
-                    </Heading>
+            <Stack
+                spacing={4}
+                w={"full"}
+                maxW={"md"}
+                bg={Bgvalue}
+                rounded={"xl"}
+                boxShadow={"lg"}
+                p={6}
+                my={12}
+            >
+                <Heading lineHeight={1.1} color={"red.400"} fontSize={{ base: "2xl", md: "3xl" }}>
+                    {Message}
+                </Heading>
 
-                    <FormControl id="password" isRequired>
-                        <FormLabel>Password</FormLabel>
-                        <Input type="password" ref={passwordRef} />
-                    </FormControl>
-                    <FormControl id="password Confirm password">
-                        <FormLabel>Confirm Password</FormLabel>
-                        <Input type="password" ref={cpasswordRef} />
-                    </FormControl>
-                    <Stack spacing={6}>
-                        <Button
-                            bg={"#040505"}
-                            color={"white"}
-                            type="submit"
-                            _hover={{
-                                bg: "green.400",
-                            }}
-                        >
-                            Submit
-                        </Button>
-                    </Stack>
-                </Stack>
-            </form>
+                <Formik
+                    initialValues={{ password: "", password2: "" }}
+                    onSubmit={async (values, { setErrors }) => {
+                        if (values.password !== values.password2) {
+                            setErrors({
+                                password: "Password Not matching",
+                                password2: "Password Not matching",
+                            });
+                        } else {
+                            const responce = await fetch(
+                                `${process.env.NEXT_PUBLIC_SERVER_ENDPOINT2}/auth/api/reset-password-now`,
+                                {
+                                    method: "POST",
+                                    credentials: "include",
+                                    headers: {
+                                        "Content-Type": "application/json",
+                                    },
+                                    body: JSON.stringify({
+                                        resetPasswordToken: token,
+                                        password: values.password,
+                                    }),
+                                }
+                            );
+                            const respp = await responce.json();
+                            if (respp.success === false) {
+                                setMessage(respp.message);
+                                setlink(true);
+                            } else {
+                                router.push("/login");
+                            }
+
+                            // console.log(responce);
+                        }
+                    }}
+                >
+                    {({ isSubmitting }) => (
+                        <Form>
+                            <Stack
+                                spacing={4}
+                                w={"full"}
+                                maxW={"md"}
+                                bg={Bgvalue}
+                                // rounded={"xl"}
+                                // boxShadow={"lg"}
+                                p={6}
+                                my={12}
+                            >
+                                <InputField
+                                    name="password"
+                                    placeholder="password"
+                                    label="Password"
+                                    type="password"
+                                    required
+                                    minLength={6}
+                                />
+                                <InputField
+                                    name="password2"
+                                    placeholder="Confirm Password"
+                                    label="Password2"
+                                    type="password2"
+                                    required
+                                    minLength={6}
+                                />
+                            </Stack>
+                            <Stack spacing={10}>
+                                <Button
+                                    bg={"#040505"}
+                                    color={"white"}
+                                    _hover={{
+                                        bg: "green.500",
+                                    }}
+                                    type="submit"
+                                    isLoading={isSubmitting}
+                                >
+                                    Reset Password
+                                </Button>
+                                {link ? (
+                                    <Button
+                                        bg={"#040505"}
+                                        color={"white"}
+                                        _hover={{
+                                            bg: "green.500",
+                                        }}
+                                    >
+                                        <ForgotPass title={" Send Reset Link again"} />
+                                    </Button>
+                                ) : null}
+                            </Stack>
+                        </Form>
+                    )}
+                </Formik>
+            </Stack>
         </Flex>
     );
 }
 export default ResetPasswordForm;
+
+ResetPasswordForm.getInitialProps = async (ctx: NextPageContext) => {
+    const token = ctx.query.token;
+    return {
+        token,
+    };
+};

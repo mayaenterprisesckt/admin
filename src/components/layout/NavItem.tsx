@@ -20,44 +20,45 @@ import { ReactText } from "react";
 import { IconType } from "react-icons";
 import { FiMenu, FiChevronDown } from "react-icons/fi";
 import DarkModeToggleSwitch from "../shared/ToggleThemeSwitch";
-import { useRouter } from "next/router";
 
 interface NavItemProps extends FlexProps {
     icon: IconType;
     children: ReactText;
+    path: string;
 }
 
-const NavItem = ({ icon, children, ...rest }: NavItemProps) => {
+const NavItem = ({ icon, children, path, ...rest }: NavItemProps) => {
     const value = useColorModeValue("primaryDark", "gray.300");
-
     return (
-        <Link href="/">
-            <Flex
-                align="center"
-                p="4"
-                mx="4"
-                borderRadius="lg"
-                role="group"
-                color={value}
-                cursor="pointer"
-                _hover={{
-                    bg: "lightAccent",
-                    color: { value },
-                }}
-                {...rest}
-            >
-                {icon && (
-                    <Icon
-                        mr="4"
-                        fontSize="16"
-                        _groupHover={{
-                            color: { value },
-                        }}
-                        as={icon}
-                    />
-                )}
-                {children}
-            </Flex>
+        <Link href={path}>
+            <p>
+                <Flex
+                    align="center"
+                    p="4"
+                    mx="4"
+                    borderRadius="lg"
+                    role="group"
+                    color={value}
+                    cursor="pointer"
+                    _hover={{
+                        bg: "lightAccent",
+                        color: { value },
+                    }}
+                    {...rest}
+                >
+                    {icon && (
+                        <Icon
+                            mr="4"
+                            fontSize="16"
+                            _groupHover={{
+                                color: { value },
+                            }}
+                            as={icon}
+                        />
+                    )}
+                    {children}
+                </Flex>
+            </p>
         </Link>
     );
 };
@@ -68,17 +69,6 @@ interface MobileProps extends FlexProps {
 export const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
     const Bgvalue = useColorModeValue("#FFFFFF", "primaryDark");
     const ColorValue = useColorModeValue("primaryDark", "#FFFFFF");
-
-    const router = useRouter();
-
-    async function handelLogout() {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_ENDPOINT2}/logout`, {
-            credentials: "include",
-        });
-        const json = await res;
-        console.log(json);
-        router.push("/");
-    }
 
     return (
         <Flex
@@ -157,9 +147,7 @@ export const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
                                         <DarkModeToggleSwitch />
                                     </MenuItem>
                                     <MenuDivider />
-                                    <MenuItem>
-                                        <Button onClick={handelLogout}>Sign out</Button>
-                                    </MenuItem>
+                                    <MenuItem></MenuItem>
                                 </MenuList>
                             </>
                         )}

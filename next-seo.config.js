@@ -3,13 +3,11 @@ const defaultSEOConfig = {
     title: "Minvest",
     titleTemplate: "%s | Minvest",
     defaultTitle: "Minvest",
-    description:
-        "Minvest is a finance managing software where you can allow your users to view finantial report , publish roadmap, and complete your customer feedback loop.",
+    description: "MAdmin DashBoard",
     openGraph: {
         url: "https://admin.minvest.mayaenterprises.co.in",
         title: "minvest",
-        description:
-            "Minvest is a finance managing software where you can allow your users to view finantial report , publish roadmap, and complete your customer feedback loop.",
+        description: "MAdmin DashBoard",
         images: [
             {
                 url: "https://admin.minvest.mayaenterprises.co.in",

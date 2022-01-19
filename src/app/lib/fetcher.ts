@@ -1,10 +1,9 @@
 import fetch from "isomorphic-unfetch";
-import { NextPageContext } from "next";
 import Router from "next/router";
-import { parseCookies } from "nookies";
+import { getAccessToken } from "./accessToken";
 
-export async function fetcher(url: string, ctx: NextPageContext) {
-    const jwt = parseCookies(ctx).token;
+export async function fetcher(url: string, ctx: any) {
+    const jwt = getAccessToken(ctx);
     const resp = await fetch(url, {
         credentials: "include",
         headers: {
@@ -28,26 +27,3 @@ export async function fetcher(url: string, ctx: NextPageContext) {
     const json = await resp.json();
     return json;
 }
-
-// import axios from "axios";
-// import { parseCookies } from "nookies";
-
-// const fetcher = async <T>(url: string, ctx?: any): Promise<T | null> => {
-//     const jwt = parseCookies(ctx).token;
-//     const cookies = parseCookies(ctx);
-//     try {
-//         const { data } = await axios.get<T>(url, {
-//             withCredentials: true,
-//             headers: {
-//                 cookie: JSON.stringify(cookies),
-//                 Authorization: jwt,
-//             },
-//         });
-
-//         return data;
-//     } catch (e) {
-//         return null;
-//     }
-// };
-
-// export default fetcher;

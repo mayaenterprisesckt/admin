@@ -16,6 +16,7 @@ const Layout = ({ children }: LayoutProps) => {
         <>
             <Box minH="100vh" bg={useColorModeValue("#EDF2F7", "primaryDark")}>
                 <SidebarContent onClose={() => onClose} display={{ base: "none", md: "block" }} />
+
                 <Drawer
                     autoFocus={false}
                     isOpen={isOpen}

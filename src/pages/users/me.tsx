@@ -1,12 +1,12 @@
 import type { NextPage } from "next";
 import Head from "next/head";
-import IndexLayout from "../components/layout";
+import IndexLayout from "../../components/layout";
 
 import { fetcher } from "@/app/lib/fetcher";
 
 import { NextPageContext } from "next";
 import useSwr from "swr";
-const Home: NextPage = ({ fallbackData }: any) => {
+const Me: NextPage = ({ fallbackData }: any) => {
     const { data } = useSwr<any | null>(
         `${process.env.NEXT_PUBLIC_SERVER_ENDPOINT2}/auth/api/authenticate`,
         fetcher,
@@ -33,9 +33,9 @@ const Home: NextPage = ({ fallbackData }: any) => {
     );
 };
 
-export default Home;
+export default Me;
 
-Home.getInitialProps = async (ctx: NextPageContext) => {
+Me.getInitialProps = async (ctx: NextPageContext) => {
     // console.log(ctx.req?.headers.cookie);
     // console.log(jwt);
     const ress = await fetcher(
