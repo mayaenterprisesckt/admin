@@ -1,10 +1,16 @@
-import { NextPageContext } from "next";
-import { IncomingMessage } from "http";
+declare module GetUser {
+    export interface User {
+        id: number;
+        username: string;
+        usertype: string;
+        email: string;
+        name: string;
+    }
 
-export interface CookieMessage extends IncomingMessage {
-    cookies: { [name: string]: string };
-}
-
-export interface CookiesPageContext extends NextPageContext {
-    req: CookieMessage | undefined;
+    export interface RootObject {
+        success: boolean;
+        user: User;
+        token: string;
+        message: string;
+    }
 }

@@ -24,8 +24,8 @@ export const InputField: React.FC<InputFieldProps> = ({
     ...props
 }) => {
     const [field, { error }] = useField(props);
-    const [hide, setHide] = useState(false);
-    const handleClick = () => setHide(!hide);
+    const [show, setShow] = useState(false);
+    const handleClick = () => setShow(!show);
     return (
         <div>
             <FormControl isInvalid={!!error}>
@@ -36,13 +36,13 @@ export const InputField: React.FC<InputFieldProps> = ({
                         {...props}
                         id={field.name}
                         placeholder={props.placeholder}
-                        type={hide ? "password" : `${type}`}
+                        type={show ? "text" : `${type}`}
                     />
 
                     {passwordField === true ? (
                         <InputRightElement width="4.5rem">
                             <p className="cursor-pointer h-5" onClick={handleClick}>
-                                {hide ? <AiOutlineEye /> : <AiOutlineEyeInvisible />}
+                                {show ? <AiOutlineEye /> : <AiOutlineEyeInvisible />}
                             </p>
                         </InputRightElement>
                     ) : null}

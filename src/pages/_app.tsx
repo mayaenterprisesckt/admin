@@ -15,6 +15,7 @@ import NProgress from "nprogress";
 import "nprogress/nprogress.css";
 
 import Router from "next/router";
+import { SessionProvider } from "next-auth/react";
 
 const clientSideEmotionCache = createEmotionCache();
 
@@ -34,22 +35,35 @@ Router.events.on("routeChangeComplete", () => {
 Router.events.on("routeChangeError", () => {
     NProgress.done();
 });
-const MyApp = ({ Component, pageProps, emotionCache = clientSideEmotionCache }: MyAppProps) => {
+const MyApp = ({
+    Component,
+    pageProps: { session, ...pageProps },
+    emotionCache = clientSideEmotionCache,
+}: MyAppProps) => {
     return (
-        <CacheProvider value={emotionCache}>
-            <ThemeProvider attribute="class">
-                <ChakraProvider theme={customTheme}>
-                    <Head>
-                        <meta
-                            name="viewport"
-                            content="minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no, viewport-fit=cover"
-                        />
-                    </Head>
-                    <DefaultSeo {...defaultSEOConfig} />
-                    <Component {...pageProps} />
-                </ChakraProvider>
-            </ThemeProvider>
-        </CacheProvider>
+        <SessionProvider session={session}>
+            <CacheProvider value={emotionCache}>
+                <ThemeProvider attribute="class">
+                    <ChakraProvider theme={customTheme}>
+                        <Head>
+                            <meta
+                                name="viewport"
+                                content="minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no, viewport-fit=cover"
+                            />
+                        </Head>
+                        <DefaultSeo {...defaultSEOConfig} />
+                        {/* {Component.auth ? (
+                            <Auth>
+                                <Component {...pageProps} />
+                            </Auth>
+                        ) : (
+                            <Component {...pageProps} />
+                        )} */}
+                        <Component {...pageProps} />
+                    </ChakraProvider>
+                </ThemeProvider>
+            </CacheProvider>
+        </SessionProvider>
     );
 };
 
@@ -58,3 +72,16 @@ MyApp.defaultProps = {
 };
 
 export default MyApp;
+
+// function Auth({ children }: { children: ReactNode }) {
+//     const { data: session, status } = useSession({ required: true });
+//     const isAdmin = session?.user!.usertype!;
+
+//     if (isAdmin === "ADMIN") {
+//         return children;
+//     }
+
+//     // Session is being fetched, or no user.
+//     // If no user, useEffect() will redirect.
+//     return <div>Loading...</div>;
+// }

@@ -1,18 +1,24 @@
-import { Flex, useColorModeValue, Text, Stack, Heading, Box, Button } from "@chakra-ui/react";
+import {
+    Flex,
+    useColorModeValue,
+    Text,
+    Stack,
+    Heading,
+    Box,
+    Button,
+    useToast,
+} from "@chakra-ui/react";
 
 import { useRouter } from "next/router";
-import React, { useState } from "react";
-import { setAccessToken } from "@/app/lib/accessToken";
+import { signIn, getCsrfToken, getSession } from "next-auth/react";
 import { Form, Formik } from "formik";
 import { InputField } from "@/components/From/InputField";
-import ForgotPass from "@/containers/ForgotPass";
-
-function LoginPage() {
-    // hmm use history if authh let me know
-    const router = useRouter();
+import ForgotPass from "@/containers/auth/ForgotPass";
+function LoginPage({ csrfToken }: { csrfToken: any }) {
     const Bgvalue = useColorModeValue("#FFFFFF", "primaryDark");
-    const [message, setMessage] = useState("");
-    // const { isOpen, onOpen, onClose } = useDisclosure();
+    const router = useRouter();
+    const toast = useToast();
+    // const error = router.query.error;
 
     return (
         <Flex minH={"100vh"} align={"center"} justify={"center"} bg={Bgvalue}>
@@ -20,72 +26,74 @@ function LoginPage() {
                 <Stack align={"center"}>
                     <Heading fontSize={"4xl"}>Sign in to your account</Heading>
                     <Text fontSize={"lg"} color={"green.500"}>
-                        {message}
+                        Enjoy All Your
                     </Text>
                 </Stack>
                 <Box rounded={"lg"} bg={Bgvalue} boxShadow={"lg"} p={8}>
                     <Stack spacing={4}>
                         <Formik
                             initialValues={{ username: "", password: "" }}
-                            onSubmit={async (values, { setErrors }) => {
-                                // if (values.password === "") {
-                                //     setErrors({
-                                //         password: "Password is required.",
-                                //     });
-                                // }
-                                // if (values.username === "") {
-                                //     setErrors({
-                                //         password: "Username is required.",
-                                //     });
-                                // }
-                                const responce = await fetch(
-                                    `${process.env.NEXT_PUBLIC_SERVER_ENDPOINT2}/auth/api/authenticate`,
-                                    {
-                                        method: "POST",
-                                        credentials: "include",
-                                        headers: {
-                                            "Content-Type": "application/json",
-                                        },
-                                        body: JSON.stringify({
-                                            username: values.username,
-                                            password: values.password,
-                                        }),
-                                    }
-                                );
-                                const respp = await responce.json();
-                                // console.log(responce);
-                                if (respp.success === false) {
+                            onSubmit={async (values, { setErrors, setSubmitting }) => {
+                                const res = await signIn("credentials", {
+                                    redirect: false,
+                                    username: values.username,
+                                    password: values.password,
+                                    callbackUrl: `${window.location.origin}`,
+                                });
+
+                                // @ts-ignore
+                                if (res?.error) {
                                     setErrors({
-                                        username: respp.message,
+                                        // @ts-ignore
+                                        // username: res?.error,
+                                        username: "Username or password Wrong",
                                     });
-                                    if (respp.message === "Incorrect password.") {
+                                    // @ts-ignore
+                                    if (res?.error === "Incorrect password.") {
                                         setErrors({
-                                            password: respp.message,
+                                            // @ts-ignore
+                                            // password: res?.error,
+                                            password: "Username or password Wrong",
                                         });
                                     }
                                 }
-                                if (respp.success === true) {
-                                    setMessage(respp.message);
-                                    await setAccessToken(respp.token);
-                                    router.push("/");
+                                // @ts-ignore
+                                if (res.url) {
+                                    toast({
+                                        title: "Hurray You are logged in ",
+                                        duration: 3000,
+                                        isClosable: true,
+                                        position: "top",
+                                    });
+                                    // @ts-ignore
+                                    router.push(res.url);
+                                    setSubmitting(false);
+                                    // router.push("/");
                                 }
                             }}
                         >
                             {({ isSubmitting }) => (
                                 <Form>
+                                    <input
+                                        name="csrfToken"
+                                        type="hidden"
+                                        defaultValue={csrfToken}
+                                    />
                                     <InputField
                                         required
                                         name="username"
                                         placeholder="username"
                                         label="Username"
                                         minLength={3}
+                                        type={"text"}
+                                        passwordField={false}
                                     />
 
                                     <InputField
                                         name="password"
                                         placeholder="password"
                                         label="Password"
-                                        // type={"password"}
+                                        type={"password"}
                                         passwordField={true}
                                         required
                                         minLength={6}
@@ -124,3 +132,22 @@ function LoginPage() {
 }
 
 export default LoginPage;
+
+export async function getServerSideProps(context: any) {
+    const { req, res } = context;
+    const session = await getSession({ req });
+    session;
+    if (session && res && session.accessToken) {
+        res.writeHead(302, {
+            Location: "/",
+        });
+        res.end();
+        return null;
+    }
+    return {
+        props: {
+            session: null,
+            csrfToken: await getCsrfToken(context),
+        },
+    };
+}

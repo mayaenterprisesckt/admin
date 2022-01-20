@@ -1,6 +1,6 @@
 /** @type {import('next-sitemap').IConfig} */
 const NextSitemapConfig = {
-    siteUrl: "https://admin.minvest.mayaenterprises.co.in",
+    siteUrl: "https://admin.madnin.mayaenterprises.co.in",
     generateRobotsTxt: true,
 };
 

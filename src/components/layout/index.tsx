@@ -1,44 +1,24 @@
-import { Box, Drawer, DrawerContent, useColorModeValue, useDisclosure } from "@chakra-ui/react";
-import { ReactNode } from "react";
-import Footer from "./Footer";
+import { Box, useColorModeValue } from "@chakra-ui/react";
+import React, { ReactNode } from "react";
+import Nav from "../Nav";
+import SidebarContent from "./Sidebar/SidebarContent";
 
-import { MobileNav } from "./NavItem";
-import SidebarContent from "./Sidebar";
-
-type LayoutProps = {
-    children: ReactNode;
-};
-
-const Layout = ({ children }: LayoutProps) => {
-    const { isOpen, onOpen, onClose } = useDisclosure();
+function Layout({ children }: { children: ReactNode }) {
+    const Bgvalue = useColorModeValue("#FFFFFF", "primaryDark");
 
     return (
         <>
-            <Box minH="100vh" bg={useColorModeValue("#EDF2F7", "primaryDark")}>
-                <SidebarContent onClose={() => onClose} display={{ base: "none", md: "block" }} />
+            <Nav></Nav>
+            <Box as="section" bg={Bgvalue} minH="100vh" pt={10}>
+                <SidebarContent display={{ base: "none", md: "unset" }} />
 
-                <Drawer
-                    autoFocus={false}
-                    isOpen={isOpen}
-                    placement="left"
-                    onClose={onClose}
-                    returnFocusOnClose={false}
-                    onOverlayClick={onClose}
-                    size="sm"
-                >
-                    <DrawerContent>
-                        <SidebarContent onClose={onClose} />
-                    </DrawerContent>
-                </Drawer>
-                {/* mobilenav */}
-                <MobileNav onOpen={onOpen} />
-                <Box ml={{ base: 0, md: 60 }} p="4">
-                    {children}
+                <Box ml={{ base: 0, md: 60 }} transition=".3s ease">
+                    <Box as="main" p="4" mt={10}>
+                        {children}
+                    </Box>
                 </Box>
-                <Footer />
             </Box>
         </>
     );
-};
-
+}
 export default Layout;

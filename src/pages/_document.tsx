@@ -6,7 +6,7 @@ import * as React from "react";
 
 import createEmotionCache from "../styles/createEmotionCache";
 
-const APP_NAME = "Myapp";
+const APP_NAME = "Madmin";
 
 class MyDocument extends Document {
     static async getInitialProps(ctx: DocumentContext) {
@@ -53,12 +53,12 @@ class MyDocument extends Document {
                     <meta name="twitter:card" content="summary" />
                     <meta
                         name="twitter:image"
-                        content="https://minvest.mayaenterprises.co.in/logo.webp"
+                        content="https://madnin.mayaenterprises.co.in/logo.webp"
                     />
                     <meta name="twitter:creator" content="@zax4r0" />
                     <meta property="og:type" content="website" />
-                    <meta property="og:title" content="minvest" />
-                    <meta name="twitter:url" content="https://minvest.mayaenterprises.co.in" />
+                    <meta property="og:title" content="madnin" />
+                    <meta name="twitter:url" content="https://madnin.mayaenterprises.co.in" />
                     <meta name="msapplication-tap-highlight" content="no" />
                     <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
                     <meta name="theme-color" content="#00C480" />

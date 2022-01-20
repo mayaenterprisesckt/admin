@@ -31,6 +31,6 @@
         },
         "incremental": true
     },
-    "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx,", "src", "commitlint.config.js"],
+    "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "commitlint.config.js"],
     "exclude": ["node_modules"]
 }

@@ -13,7 +13,6 @@ import {
     useDisclosure,
 } from "@chakra-ui/react";
 import { Formik, Form } from "formik";
-import { useRouter } from "next/router";
 import { useState } from "react";
 
 interface forgotPassProps {
@@ -22,7 +21,6 @@ interface forgotPassProps {
 
 function ForgotPass({ title }: forgotPassProps) {
     const { onClose, isOpen, onOpen } = useDisclosure();
-    const router = useRouter();
     const Bgvalue = useColorModeValue("#FFFFFF", "primaryDark");
     const Colorvalue = useColorModeValue("primaryDark", "#FFFFFF");
     const [message, setMessage] = useState("Forgot your password?");
@@ -55,7 +53,7 @@ function ForgotPass({ title }: forgotPassProps) {
                                     }
                                 );
                                 const respp = await responce.json();
-                                console.log(respp.errors);
+                                respp.errors;
                                 if (respp.errors) {
                                     setErrors({
                                         email: respp.errors[0].msg,
@@ -63,12 +61,16 @@ function ForgotPass({ title }: forgotPassProps) {
                                 }
                                 if (respp.success === false) {
                                     setErrors({
-                                        email: respp.message,
+                                        // email: respp.message,
+                                        email: "Please Check Your email",
                                     });
                                 }
                                 if (respp.success === true) {
                                     setMessage(respp.message);
-                                    router.push("/login");
+                                    // router.push("/login");
+                                    setTimeout(() => {
+                                        onClose();
+                                    }, 5000);
                                 }
                             }}
                         >
