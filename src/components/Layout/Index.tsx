@@ -1,7 +1,7 @@
 import { Box, useColorModeValue } from "@chakra-ui/react";
 import React, { ReactNode } from "react";
 import Nav from "../Nav";
-import SidebarContent from "./Sidebar/SidebarContent";
+import SidebarContent from "../Sidebar/SidebarContent";
 
 function Layout({ children }: { children: ReactNode }) {
     const Bgvalue = useColorModeValue("#FFFFFF", "primaryDark");

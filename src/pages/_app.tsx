@@ -6,10 +6,9 @@ import "@fontsource/lexend/latin.css";
 import { ThemeProvider } from "next-themes";
 import { EmotionCache } from "@emotion/cache";
 import { CacheProvider } from "@emotion/react";
-import customTheme from "../styles/customTheme";
+import customTheme from "../styles/theme";
 import { ChakraProvider } from "@chakra-ui/react";
 import defaultSEOConfig from "../../next-seo.config";
-
 import createEmotionCache from "../styles/createEmotionCache";
 import NProgress from "nprogress";
 import "nprogress/nprogress.css";
@@ -41,7 +40,7 @@ const MyApp = ({
     emotionCache = clientSideEmotionCache,
 }: MyAppProps) => {
     return (
-        <SessionProvider session={session}>
+        <SessionProvider session={session} refetchInterval={5 * 60}>
             <CacheProvider value={emotionCache}>
                 <ThemeProvider attribute="class">
                     <ChakraProvider theme={customTheme}>
@@ -52,13 +51,6 @@ const MyApp = ({
                             />
                         </Head>
                         <DefaultSeo {...defaultSEOConfig} />
-                        {/* {Component.auth ? (
-                            <Auth>
-                                <Component {...pageProps} />
-                            </Auth>
-                        ) : (
-                            <Component {...pageProps} />
-                        )} */}
                         <Component {...pageProps} />
                     </ChakraProvider>
                 </ThemeProvider>
@@ -72,16 +64,3 @@ MyApp.defaultProps = {
 };
 
 export default MyApp;
-
-// function Auth({ children }: { children: ReactNode }) {
-//     const { data: session, status } = useSession({ required: true });
-//     const isAdmin = session?.user!.usertype!;
-
-//     if (isAdmin === "ADMIN") {
-//         return children;
-//     }
-
-//     // Session is being fetched, or no user.
-//     // If no user, useEffect() will redirect.
-//     return <div>Loading...</div>;
-// }

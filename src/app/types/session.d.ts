@@ -1,5 +1,5 @@
-declare module GetUser {
-    export interface User {
+declare module Session {
+    export interface user {
         id: number;
         username: string;
         usertype: string;
@@ -7,7 +7,7 @@ declare module GetUser {
         name: string;
     }
 
-    export interface RootObject {
+    export interface SessionData {
         success: boolean;
         user: User;
         token: string;

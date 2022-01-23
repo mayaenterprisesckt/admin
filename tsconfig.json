@@ -31,6 +31,12 @@
         },
         "incremental": true
     },
-    "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "commitlint.config.js"],
+    "include": [
+        "next-env.d.ts",
+        "**/*.ts",
+        "**/*.tsx",
+        "commitlint.config.js",
+        "src/components/Card/CardLineChart.js"
+    ],
     "exclude": ["node_modules"]
 }

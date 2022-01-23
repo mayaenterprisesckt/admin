@@ -1,7 +1,6 @@
 import { Box, Text, useColorModeValue, Flex } from "@chakra-ui/react";
-import { FaRss } from "react-icons/fa";
-import { MdHome } from "react-icons/md";
-import NavLink from "./NavItem";
+import { FaTv, FaWrench, FaUpload } from "react-icons/fa";
+import NavLink from "./SidebarItemsLink";
 
 function SidebarContent(props: any) {
     const Bgvalue = useColorModeValue("#FFFFFF", "primaryDark");
@@ -51,16 +50,18 @@ function SidebarContent(props: any) {
                 color="gray.600"
                 aria-label="Main Navigation"
             >
-                <SidebarLink icon={MdHome} href="/">
-                    Home
+                <SidebarLink icon={FaTv} href="/">
+                    Dashboard
                 </SidebarLink>
-                <SidebarLink icon={FaRss} href="/upload">
+                <SidebarLink icon={FaUpload} href="/upload">
                     Upload
                 </SidebarLink>
-                {/* <NavItem icon={HiCollection}>Collections</NavItem> */}
-                {/* <NavItem icon={FaClipboardCheck}>Checklists</NavItem> */}
-                {/* <NavItem icon={AiFillGift}>Changelog</NavItem> */}
-                {/* <NavItem icon={BsGearFill}>Settings</NavItem> */}
+                <SidebarLink icon={FaWrench} href="/clients">
+                    Clients
+                </SidebarLink>
+                <SidebarLink icon={FaWrench} href="/settings">
+                    Settings
+                </SidebarLink>
             </Flex>
         </Box>
     );

@@ -1,5 +1,4 @@
 import type { NextPage } from "next";
-import dynamic from "next/dynamic";
 import React, { SyntheticEvent, useState } from "react";
 import {
     chakra,
@@ -19,8 +18,7 @@ import {
 } from "@chakra-ui/react";
 import FileService from "@/app/service/fileService";
 import { useSession } from "next-auth/react";
-
-const IndexLayout = dynamic(() => import("../../components/layout"));
+import IndexLayout from "../../components/Layout/Index";
 
 const Settings: NextPage = () => {
     const toast = useToast();

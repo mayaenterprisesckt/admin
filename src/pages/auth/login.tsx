@@ -10,16 +10,23 @@ import {
 } from "@chakra-ui/react";
 
 import { useRouter } from "next/router";
-import { signIn, getCsrfToken, getSession } from "next-auth/react";
+import { signIn, getCsrfToken, getSession, useSession } from "next-auth/react";
 import { Form, Formik } from "formik";
 import { InputField } from "@/components/From/InputField";
 import ForgotPass from "@/containers/auth/ForgotPass";
+import { NextPageContext } from "next";
 function LoginPage({ csrfToken }: { csrfToken: any }) {
     const Bgvalue = useColorModeValue("#FFFFFF", "primaryDark");
     const router = useRouter();
     const toast = useToast();
-    // const error = router.query.error;
+    const { status } = useSession();
+    if (status === "authenticated") {
+        router.push("/");
+        return null;
+    }
+    // if (status === "authenticated") {
 
+    // }
     return (
         <Flex minH={"100vh"} align={"center"} justify={"center"} bg={Bgvalue}>
             <Stack spacing={8} mx={"auto"} maxW={"lg"} py={12} px={6}>
@@ -53,16 +60,24 @@ function LoginPage({ csrfToken }: { csrfToken: any }) {
                                         setErrors({
                                             // @ts-ignore
                                             // password: res?.error,
-                                            password: "Username or password Wrong",
+                                            password: res?.error,
                                         });
                                     }
                                 }
                                 // @ts-ignore
                                 if (res.url) {
                                     toast({
-                                        title: "Hurray You are logged in ",
                                         duration: 3000,
-                                        isClosable: true,
+                                        isClosable: false,
+                                        // @ts-ignore
+                                        title: res?.error
+                                            ? // @ts-ignore
+                                              `${res?.error}`
+                                            : "Hurray You are logged in",
+                                        // @ts-ignore
+                                        // description: `${res.error}`,
+                                        // @ts-ignore
+                                        status: res.error ? `${res.error}` : "success",
                                         position: "top",
                                     });
                                     // @ts-ignore
@@ -133,11 +148,10 @@ function LoginPage({ csrfToken }: { csrfToken: any }) {
 
 export default LoginPage;
 
-export async function getServerSideProps(context: any) {
+export async function getServerSideProps(context: NextPageContext) {
     const { req, res } = context;
     const session = await getSession({ req });
-    session;
-    if (session && res && session.accessToken) {
+    if (session && res && session?.accessToken) {
         res.writeHead(302, {
             Location: "/",
         });

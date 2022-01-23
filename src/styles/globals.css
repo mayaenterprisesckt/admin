@@ -20,30 +20,11 @@ html {
     background: #ff0000;
 }
 
-.navigation-wrapper {
-    position: relative;
+#nprogress .bar {
+    background: green;
 }
 
-.arrow {
-    width: 30px;
-    height: 30px;
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    -webkit-transform: translateY(-50%);
-    fill: #ebedf2;
-    cursor: pointer;
-}
-
-.arrow--top {
-    left: 5px;
-}
-
-.arrow--bottom {
-    left: auto;
-    right: 5px;
-}
-
-.arrow--disabled {
-    fill: #dde0e6;
+#nprogress .spinner-icon {
+    border-top-color: green;
+    border-left-color: green;
 }

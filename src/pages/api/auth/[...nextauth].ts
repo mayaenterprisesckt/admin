@@ -46,9 +46,11 @@ export default NextAuth({
                 if (!resx.ok) {
                     throw new Error(user.message);
                 }
-                // if (!resx.ok) {
-                //     throw new Error(user.exception);
-                // }
+                if (user.user.usertype !== "ADMIN") {
+                    console.log(user.user.usertype);
+                    throw new Error(user.message);
+                }
+
                 // If no error and we have user data, return it
                 if (resx.ok && user) {
                     return user;
