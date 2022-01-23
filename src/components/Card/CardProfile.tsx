@@ -1,10 +1,8 @@
-import { useSession } from "next-auth/react";
 import React from "react";
 
 // components
 
 export default function CardProfile() {
-    const { data: session } = useSession();
     return (
         <>
             <div className="relative flex flex-col min-w-0 break-words bg-[#F1F5F9] dark:bg-black w-full mb-6 shadow-xl rounded-lg mt-16">
