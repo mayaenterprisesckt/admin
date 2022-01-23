@@ -151,12 +151,14 @@ export default LoginPage;
 export async function getServerSideProps(context: NextPageContext) {
     const { req, res } = context;
     const session = await getSession({ req });
-    if (session && res && session?.accessToken) {
-        res.writeHead(302, {
-            Location: "/",
-        });
-        res.end();
-        return null;
+    if (session && res && session?.token) {
+        return {
+            redirect: {
+                // @ts-ignore
+                destination: `/`,
+                permanent: false,
+            },
+        };
     }
     return {
         props: {

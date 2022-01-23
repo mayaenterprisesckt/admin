@@ -7,7 +7,7 @@ import { ThemeProvider } from "next-themes";
 import { EmotionCache } from "@emotion/cache";
 import { CacheProvider } from "@emotion/react";
 import customTheme from "../styles/theme";
-import { ChakraProvider } from "@chakra-ui/react";
+import { ChakraProvider, Spinner } from "@chakra-ui/react";
 import defaultSEOConfig from "../../next-seo.config";
 import createEmotionCache from "../styles/createEmotionCache";
 import NProgress from "nprogress";
@@ -91,10 +91,22 @@ function Auth({ children }: { children: ReactNode }) {
         },
     });
     if (typeof window === "undefined") {
-        return null;
+        return (
+            <>
+                <div className="flex justify-center items-center h-screen">
+                    <Spinner color="red.500" size={"xl"} />
+                </div>
+            </>
+        );
     }
     if (status === "loading") {
-        return <>Loaing....</>;
+        return (
+            <>
+                <div className="flex justify-center items-center h-screen">
+                    <Spinner color="red.500" size={"xl"} />
+                </div>
+            </>
+        );
     }
     return <>{children}</>;
 }
