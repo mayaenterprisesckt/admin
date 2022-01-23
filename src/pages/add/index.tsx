@@ -3,7 +3,7 @@ import React from "react";
 // Custom components
 
 // Assets
-import IndexLayout from "@/components/Layout/Index";
+import IndexLayout from "@/Layout/Index";
 import CardSettings from "@/components/Card/CardSettings";
 
 function Settings() {

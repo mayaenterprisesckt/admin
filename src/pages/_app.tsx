@@ -13,14 +13,23 @@ import createEmotionCache from "../styles/createEmotionCache";
 import NProgress from "nprogress";
 import "nprogress/nprogress.css";
 
-import Router from "next/router";
-import { SessionProvider } from "next-auth/react";
+import Router, { useRouter } from "next/router";
+import { SessionProvider, useSession } from "next-auth/react";
+import { ReactNode } from "react";
 
 const clientSideEmotionCache = createEmotionCache();
 
-interface MyAppProps extends AppProps {
+// interface MyAppProps extends AppProps {
+//     emotionCache?: EmotionCache;
+// }
+
+type ComponentWithPageLayout = AppProps & {
     emotionCache?: EmotionCache;
-}
+    Component: AppProps["Component"] & {
+        PageLayout?: React.ComponentType;
+    };
+};
+
 NProgress.configure({ showSpinner: false });
 
 Router.events.on("routeChangeStart", () => {
@@ -38,7 +47,7 @@ const MyApp = ({
     Component,
     pageProps: { session, ...pageProps },
     emotionCache = clientSideEmotionCache,
-}: MyAppProps) => {
+}: ComponentWithPageLayout) => {
     return (
         <SessionProvider session={session} refetchInterval={5 * 60}>
             <CacheProvider value={emotionCache}>
@@ -51,7 +60,15 @@ const MyApp = ({
                             />
                         </Head>
                         <DefaultSeo {...defaultSEOConfig} />
-                        <Component {...pageProps} />
+                        {Component.PageLayout ? (
+                            <Auth>
+                                <Component.PageLayout>
+                                    <Component {...pageProps} />
+                                </Component.PageLayout>
+                            </Auth>
+                        ) : (
+                            <Component {...pageProps} />
+                        )}
                     </ChakraProvider>
                 </ThemeProvider>
             </CacheProvider>
@@ -64,3 +81,20 @@ MyApp.defaultProps = {
 };
 
 export default MyApp;
+
+function Auth({ children }: { children: ReactNode }) {
+    const router = useRouter();
+    const { status } = useSession({
+        required: true,
+        onUnauthenticated() {
+            router.push("/auth/login");
+        },
+    });
+    if (typeof window === "undefined") {
+        return null;
+    }
+    if (status === "loading") {
+        return <>Loaing....</>;
+    }
+    return <>{children}</>;
+}

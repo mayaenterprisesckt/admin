@@ -3,9 +3,10 @@ import React from "react";
 // Custom components
 
 // Assets
-import IndexLayout from "@/components/Layout/Index";
+
 import CardProfile from "@/components/Card/CardProfile";
 import CardSettings from "@/components/Card/CardSettings";
+import Layout from "@/Layout/Index";
 
 function Settings() {
     // const { data } = useSwr<User.User | null>(
@@ -16,18 +17,17 @@ function Settings() {
     //     }
     // );
     return (
-        <IndexLayout>
-            <div className="flex flex-wrap">
-                <div className="w-full lg:w-8/12 px-4">
-                    <CardSettings />
-                </div>
-                <div className="w-full lg:w-4/12 px-4">
-                    <CardProfile />
-                </div>
+        <div className="flex flex-wrap">
+            <div className="w-full lg:w-8/12 px-4">
+                <CardSettings />
             </div>
-        </IndexLayout>
+            <div className="w-full lg:w-4/12 px-4">
+                <CardProfile />
+            </div>
+        </div>
     );
 }
+Settings.PageLayout = Layout;
 
 export default Settings;
 

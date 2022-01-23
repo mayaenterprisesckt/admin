@@ -33,7 +33,13 @@ function AddNewUser({ title }: AddNewUserProps) {
                 {title}
             </p>
 
-            <Modal isOpen={isOpen} onClose={onClose} motionPreset="slideInBottom" size={"2xl"}>
+            <Modal
+                isOpen={isOpen}
+                onClose={onClose}
+                motionPreset="slideInBottom"
+                size={"2xl"}
+                onOverlayClick={onOpen}
+            >
                 <ModalOverlay />
                 <ModalContent boxShadow={"lg"} rounded={"xl"} bg={Bgvalue}>
                     {/* <ModalHeader>Modal Title</ModalHeader> */}

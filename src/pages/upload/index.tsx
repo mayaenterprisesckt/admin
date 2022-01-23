@@ -1,4 +1,3 @@
-import type { NextPage } from "next";
 import React, { SyntheticEvent, useState } from "react";
 import {
     chakra,
@@ -18,9 +17,8 @@ import {
 } from "@chakra-ui/react";
 import FileService from "@/app/service/fileService";
 import { useSession } from "next-auth/react";
-import IndexLayout from "../../components/Layout/Index";
-
-const Settings: NextPage = () => {
+import Layout from "@/Layout/Index";
+function Upload() {
     const toast = useToast();
     const { data: session } = useSession();
     const accessToken = session?.token;
@@ -75,7 +73,7 @@ const Settings: NextPage = () => {
         setSelectedFile("");
     };
     return (
-        <IndexLayout>
+        <>
             {/* <FileUpload /> */}
             <Box bg={useColorModeValue("gray.50", "inherit")} p={10}>
                 <chakra.form>
@@ -204,8 +202,8 @@ const Settings: NextPage = () => {
                     </Box>
                 </chakra.form>
             </Box>
-        </IndexLayout>
+        </>
     );
-};
-
-export default Settings;
+}
+Upload.PageLayout = Layout;
+export default Upload;

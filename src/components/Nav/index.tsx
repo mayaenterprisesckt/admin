@@ -29,11 +29,13 @@ import { GoSignOut } from "react-icons/go";
 import SidebarContent from "../Sidebar/SidebarContent";
 import { signOut, useSession } from "next-auth/react";
 import DarkModeToggleSwitch from "../Shared/ToggleThemeSwitch";
+
 function Nav() {
     const sidebar = useDisclosure();
     const Bgvalue = useColorModeValue("#FFFFFF", "primaryDark");
     const ColorValue = useColorModeValue("primaryDark", "#FFFFFF");
     const { data: session } = useSession();
+
     const toast = useToast();
 
     return (
@@ -111,7 +113,10 @@ function Nav() {
                                             status: "success",
                                             position: "top",
                                         });
-                                        signOut();
+                                        // router.push("/");
+                                        signOut({
+                                            callbackUrl: `${window.location.origin}/auth/login`,
+                                        });
                                     }}
                                 >
                                     <Icon mr="4" fontSize="16" as={GoSignOut} />

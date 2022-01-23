@@ -1,5 +1,5 @@
 import CardTable from "@/components/Card/CardTable";
-import Layout from "@/components/Layout/Index";
+import Layout from "@/Layout/Index";
 import React from "react";
 
 // components
@@ -8,13 +8,12 @@ import React from "react";
 
 function DistributerTables() {
     return (
-        <Layout>
-            <div className="flex flex-wrap mt-4">
-                <div className="w-full mb-12 px-4">
-                    <CardTable />
-                </div>
+        <div className="flex flex-wrap mt-4">
+            <div className="w-full mb-12 px-4">
+                <CardTable />
             </div>
-        </Layout>
+        </div>
     );
 }
+DistributerTables.PageLayout = Layout;
 export default DistributerTables;
