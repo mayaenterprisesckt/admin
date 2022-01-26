@@ -114,9 +114,7 @@ function Nav() {
                                             position: "top",
                                         });
                                         // router.push("/");
-                                        signOut({
-                                            callbackUrl: `${window.location.origin}/auth/login`,
-                                        });
+                                        signOut();
                                     }}
                                 >
                                     <Icon mr="4" fontSize="16" as={GoSignOut} />

@@ -30,7 +30,7 @@ export default NextAuth({
                 };
 
                 const resx = await fetch(
-                    `https://maya-enterprises-api.herokuapp.com/auth/api/authenticate`,
+                    `https://maya-enterprises-api.herokuapp.com/auth/api/authenticate-admin`,
                     {
                         method: "POST",
                         body: JSON.stringify(payload),
@@ -46,7 +46,7 @@ export default NextAuth({
                 if (!resx.ok) {
                     throw new Error(user.message);
                 }
-                if (user.user.usertype !== "ADMIN") {
+                if (user.user.usertype !== "ADM") {
                     console.log(user.user.usertype);
                     throw new Error(user.message);
                 }

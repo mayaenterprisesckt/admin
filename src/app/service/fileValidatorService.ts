@@ -3,7 +3,7 @@ interface ValidatorResponse {
     errorMessage: string;
 }
 
-const fileTypes = ["jpg", "png", "doc", "docx"];
+const fileTypes = ["dbf"];
 
 async function validateFileSize(fileSize: number): Promise<ValidatorResponse> {
     const documentFileSizeValidator = (await import("../validators/DocumentFileSizeValidator"))

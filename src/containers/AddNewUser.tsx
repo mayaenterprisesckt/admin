@@ -8,12 +8,10 @@ import {
     useColorModeValue,
     useDisclosure,
     Button,
-    FormLabel,
-    Select,
     useToast,
 } from "@chakra-ui/react";
 import { Formik, Form } from "formik";
-import { useState } from "react";
+import { useSession } from "next-auth/react";
 
 interface AddNewUserProps {
     title: string;
@@ -22,11 +20,9 @@ interface AddNewUserProps {
 function AddNewUser({ title }: AddNewUserProps) {
     const { onClose, isOpen, onOpen } = useDisclosure();
     const Bgvalue = useColorModeValue("#FFFFFF", "primaryDark");
-    const [selectedClient, setSelectedClient] = useState("");
     const toast = useToast();
-    function handleSelectChange(event: any) {
-        setSelectedClient(event.target.value);
-    }
+    const { data: session } = useSession();
+    const accessToken = session?.token;
     return (
         <div>
             <p onClick={onOpen} className="underline font-semibold cursor-pointer">
@@ -46,27 +42,38 @@ function AddNewUser({ title }: AddNewUserProps) {
                     <ModalCloseButton />
                     <ModalBody p={6} my={20}>
                         <Formik
-                            initialValues={{ email: "", username: "", name: "", password: "" }}
+                            initialValues={{
+                                email: "",
+                                username: "",
+                                name: "",
+                                password: "",
+                                pannumber: "",
+                                arnnumber: "",
+                            }}
                             onSubmit={async (values, { setErrors }) => {
                                 const responce = await fetch(
-                                    `${process.env.NEXT_PUBLIC_SERVER_ENDPOINT2}/auth/api/register`,
+                                    `${process.env.NEXT_PUBLIC_SERVER_ENDPOINT2}/auth/api/register-distributer`,
                                     {
                                         method: "POST",
                                         credentials: "include",
                                         headers: {
                                             "Content-Type": "application/json",
+                                            Authorization: accessToken as string,
                                         },
+
                                         body: JSON.stringify({
                                             email: values.email,
                                             username: values.username,
                                             name: values.name,
-                                            usertype: selectedClient,
+                                            pannumber: values.pannumber,
+                                            arnnumber: values.arnnumber,
                                             password: values.password,
                                         }),
                                     }
                                 );
                                 // console.log(JSON.stringify(values) + selectedClient);
                                 const respp = await responce.json();
+                                console.log(respp);
                                 respp.errors;
                                 if (respp.errors) {
                                     setErrors({
@@ -136,46 +143,43 @@ function AddNewUser({ title }: AddNewUserProps) {
                                                         type={"text"}
                                                         passwordField={false}
                                                         required
-                                                        minLength={6}
+                                                        minLength={3}
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="flex flex-wrap mt-4">
+                                            <div className="w-full lg:w-6/12 px-4">
+                                                <div className="relative w-full mb-3">
+                                                    <InputField
+                                                        name="pannumber"
+                                                        placeholder="pannumber"
+                                                        label="pannumber"
+                                                        type={"text"}
+                                                        passwordField={false}
+                                                        required
+                                                        minLength={10}
+                                                        maxLength={10}
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="w-full lg:w-6/12 px-4">
+                                                <div className="relative w-full mb-3">
+                                                    <InputField
+                                                        name="arnnumber"
+                                                        placeholder="arnnumber"
+                                                        label="arnnumber"
+                                                        type={"text"}
+                                                        passwordField={false}
+                                                        required
+                                                        minLength={10}
+                                                        maxLength={15}
                                                     />
                                                 </div>
                                             </div>
                                         </div>
 
                                         <hr className="mt-6 border-b-1 border-blueGray-300" />
-
-                                        <h6 className="text-blueGray-400 text-sm mt-3 mb-6 font-bold uppercase">
-                                            Cilent Info
-                                        </h6>
-                                        <div className="flex flex-wrap">
-                                            <FormLabel
-                                                htmlFor="country"
-                                                fontSize="sm"
-                                                fontWeight="md"
-                                                color={useColorModeValue("gray.700", "gray.50")}
-                                            >
-                                                USER TYPE
-                                            </FormLabel>
-                                            <Select
-                                                isRequired
-                                                value={selectedClient}
-                                                onChange={handleSelectChange}
-                                                id="filetype"
-                                                name="filetype"
-                                                autoComplete="dbf"
-                                                placeholder="Select option"
-                                                mt={1}
-                                                focusBorderColor="brand.400"
-                                                shadow="sm"
-                                                size="sm"
-                                                w="full"
-                                                rounded="md"
-                                            >
-                                                <option value="USER">USER</option>
-                                                <option value="DIS">DIS</option>
-                                                <option value="ADMIN">ADMIN</option>
-                                            </Select>
-                                        </div>
                                         <div className="flex flex-wrap mt-4">
                                             <div className="w-full lg:w-6/12 px-4">
                                                 <InputField
@@ -213,7 +217,7 @@ function AddNewUser({ title }: AddNewUserProps) {
                                             type="submit"
                                             isLoading={isSubmitting}
                                         >
-                                            Add {"New  " + selectedClient}
+                                            Add
                                         </Button>
                                     </div>
                                 </Form>

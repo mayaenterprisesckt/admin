@@ -18,60 +18,83 @@ import {
 import FileService from "@/app/service/fileService";
 import { useSession } from "next-auth/react";
 import Layout from "@/Layout/Index";
+import { validateFileSize, validateFileType } from "@/app/service/fileValidatorService";
+import { getFileSize } from "@/app/validators/DocumentFileSizeValidator";
 function Upload() {
     const toast = useToast();
     const { data: session } = useSession();
     const accessToken = session?.token;
     // console.log(accessToken);
     const [selectedFile, setSelectedFile] = useState<any>("");
-    const [selectedClient, setSelectedClient] = useState("");
+    const [selectedType, setSelectedType] = useState("");
     function handleSelectChange(event: any) {
-        setSelectedClient(event.target.value);
+        setSelectedType(event.target.value);
         toast({
             title: event.target.value,
-
-            duration: 3000,
+            duration: 5000,
             isClosable: true,
-            position: "bottom",
+            position: "top",
         });
     }
+
     const handleChange = async (element: HTMLInputElement) => {
         const file = element.files;
+        // @ts-ignore
+        const validFileType = await validateFileType(FileService.getFileExtension(file[0]?.name));
+        // @ts-ignore
+        const validFileSize = await validateFileSize(file[0]?.size);
+        if (!validFileSize.isValid) {
+            toast({
+                title: validFileSize.errorMessage,
+                duration: 5000,
+                status: "error",
+                isClosable: true,
+                position: "top",
+            });
+            return;
+        }
+
+        if (!validFileType.isValid) {
+            toast({
+                title: validFileType.errorMessage,
+                duration: 5000,
+                status: "error",
+                isClosable: true,
+                position: "top",
+            });
+            return;
+        }
         setSelectedFile(file);
     };
 
     const handleFileUpload = async (e: any) => {
         e.preventDefault();
-
         const file = selectedFile;
         if (!file) {
             return;
         }
-        // const validFileType = await validateFileType(FileService.getFileExtension(file[0].name));
-
-        // if (!validFileType.isValid) {
-        //     setUploadFormError(validFileType.errorMessage);
-        //     return;
-        // }
-        // if (uploadFormError && validFileType.isValid) {
-        //     setUploadFormError("");
-        // }
-
         // havt to pass acces token need to auth the user btw
-        const fileService = new FileService(file[0], selectedClient, accessToken as string);
+        const fileService = new FileService(file[0], selectedType, accessToken as string);
         const fileUploadResponse = await fileService.uploadFile();
         fileUploadResponse;
         toast({
             title: fileUploadResponse.success ? "File Uploaded" : "Upload Failed",
             description: fileUploadResponse.message,
             status: fileUploadResponse.success ? "success" : "error",
-            duration: 3000,
+            duration: 5000,
             isClosable: true,
-            position: "bottom",
+            position: "top",
         });
+        console.log(selectedFile);
+        console.log(JSON.stringify(selectedFile));
 
-        setSelectedFile("");
+        // setSelectedFile("");s
+        // console.log(selectedFile);
+        // console.log(JSON.stringify(selectedFile[0]));
     };
+
+    const fileSize = getFileSize(selectedFile[0]?.size as number);
+    const fileName = selectedFile[0]?.name;
     return (
         <>
             {/* <FileUpload /> */}
@@ -88,12 +111,13 @@ function Upload() {
                         </FormLabel>
                         <Select
                             isRequired
-                            value={selectedClient}
+                            required
+                            value={selectedType}
                             onChange={handleSelectChange}
                             id="filetype"
                             name="filetype"
                             autoComplete="dbf"
-                            placeholder="Select option"
+                            placeholder="Select File Type"
                             mt={1}
                             focusBorderColor="brand.400"
                             shadow="sm"
@@ -108,11 +132,12 @@ function Upload() {
                     </FormControl>
                     <FormControl>
                         <FormLabel
+                            mt={"5"}
                             fontSize="sm"
                             fontWeight="md"
                             color={useColorModeValue("gray.700", "gray.50")}
                         >
-                            Cover photo
+                            File info
                         </FormLabel>
                         <Flex
                             mt={1}
@@ -125,38 +150,38 @@ function Upload() {
                             borderStyle="dashed"
                             rounded="md"
                         >
-                            <Stack spacing={1} textAlign="center">
-                                <Icon
-                                    mx="auto"
-                                    boxSize={12}
-                                    color={useColorModeValue("gray.400", "gray.500")}
-                                    stroke="currentColor"
-                                    fill="none"
-                                    viewBox="0 0 48 48"
-                                    aria-hidden="true"
-                                >
-                                    <path
-                                        d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
-                                        strokeWidth="2"
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                    />
-                                </Icon>
-                                <Flex
-                                    fontSize="sm"
-                                    color={useColorModeValue("gray.600", "gray.400")}
-                                    alignItems="baseline"
-                                >
-                                    <chakra.label
-                                        htmlFor="file-upload"
-                                        cursor="pointer"
-                                        rounded="md"
-                                        fontSize="md"
-                                        color={useColorModeValue("brand.600", "brand.200")}
-                                        pos="relative"
-                                        _hover={{
-                                            color: useColorModeValue("brand.400", "brand.300"),
-                                        }}
+                            <chakra.label
+                                htmlFor="file-upload"
+                                cursor="pointer"
+                                rounded="md"
+                                fontSize="md"
+                                color={useColorModeValue("brand.600", "brand.200")}
+                                pos="relative"
+                                _hover={{
+                                    color: useColorModeValue("brand.400", "brand.300"),
+                                }}
+                            >
+                                <Stack spacing={1} textAlign="center">
+                                    <Icon
+                                        mx="auto"
+                                        boxSize={12}
+                                        color={useColorModeValue("gray.400", "gray.500")}
+                                        stroke="currentColor"
+                                        fill="none"
+                                        viewBox="0 0 48 48"
+                                        aria-hidden="true"
+                                    >
+                                        <path
+                                            d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
+                                            strokeWidth="2"
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                        />
+                                    </Icon>
+                                    <Flex
+                                        fontSize="sm"
+                                        color={useColorModeValue("gray.600", "gray.400")}
+                                        alignItems="baseline"
                                     >
                                         <span>Upload a file</span>
                                         <VisuallyHidden>
@@ -171,27 +196,34 @@ function Upload() {
                                                 }
                                             />
                                         </VisuallyHidden>
-                                    </chakra.label>
 
-                                    <Text pl={1}>or drag and drop</Text>
-                                </Flex>
-                                <Text
-                                    fontSize="xs"
-                                    color={useColorModeValue("gray.500", "gray.50")}
-                                >
-                                    PNG, JPG, GIF up to 10MB
-                                </Text>
-                            </Stack>
+                                        {/* <Text pl={1}>or drag and drop</Text> */}
+                                    </Flex>
+                                    <Text
+                                        fontSize="lg"
+                                        color={useColorModeValue("gray.500", "gray.50")}
+                                    >
+                                        {selectedFile ? fileName : "Please Select A file to upload"}
+                                    </Text>
+                                    <Text
+                                        fontSize="lg"
+                                        color={useColorModeValue("gray.500", "gray.50")}
+                                    >
+                                        {selectedFile ? fileSize : ""}
+                                    </Text>
+                                </Stack>
+                            </chakra.label>
                         </Flex>
                     </FormControl>
                     <Box
                         px={{ base: 4, sm: 6 }}
                         py={3}
-                        bg={useColorModeValue("gray.50", "gray.900")}
+                        // bg={useColorModeValue("gray.50", "gray.900")}
                         textAlign="right"
                     >
                         <Button
                             // type="submit"
+                            disabled={!selectedType}
                             colorScheme="green"
                             _focus={{ shadow: "" }}
                             fontWeight="md"

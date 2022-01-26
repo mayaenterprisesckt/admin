@@ -24,9 +24,9 @@ class FileService {
     }
 
     async uploadFile(): Promise<UploadFileResponse> {
-        console.log(this.fileType, this.file);
+        // console.log(this.fileType, this.file);
 
-        console.log(this.accessToken);
+        // console.log(this.accessToken);
         const uploadResponse = await fetch(
             "https://maya-enterprises-api.herokuapp.com/upload/api",
             {
@@ -39,9 +39,10 @@ class FileService {
         );
         const responseJson = await uploadResponse.json();
 
-        // console.log(responseJson);
+        //console.log(responseJson);
+        //console.log(uploadResponse);
 
-        if (responseJson.success === false) {
+        if (uploadResponse.status === 405) {
             return {
                 success: false,
                 message: responseJson.message,
@@ -58,7 +59,7 @@ class FileService {
         const formData = new FormData();
         formData.append("file", this.file);
         formData.append("type", this.fileType);
-        console.log(formData);
+        //console.log(formData);
         return formData;
     }
 }

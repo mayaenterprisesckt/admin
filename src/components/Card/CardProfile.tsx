@@ -1,8 +1,16 @@
+import { Button, useToast } from "@chakra-ui/react";
+import { Formik, Form } from "formik";
+import { useSession } from "next-auth/react";
 import React from "react";
+import { InputField } from "../From/InputField";
 
 // components
 
 export default function CardProfile() {
+    const { data: session } = useSession();
+    const toast = useToast();
+    const accessToken = session?.token;
+
     return (
         <>
             <div className="relative flex flex-col min-w-0 break-words bg-[#F1F5F9] dark:bg-black w-full mb-6 shadow-xl rounded-lg mt-16">
@@ -12,69 +20,128 @@ export default function CardProfile() {
                             <div className="relative">
                                 <img
                                     alt="..."
-                                    src="/assets/images/1.jpg"
+                                    src="/fallback.png"
                                     className="shadow-xl rounded-full h-auto align-middle border-none absolute -m-16 -ml-20 lg:-ml-16 max-w-150-px"
                                 />
-                            </div>
-                        </div>
-                        <div className="w-full px-4 text-center mt-20">
-                            <div className="flex justify-center py-4 lg:pt-4 pt-8">
-                                <div className="mr-4 p-3 text-center">
-                                    <span className="text-xl font-bold block uppercase tracking-wide text-blueGray-600">
-                                        22
-                                    </span>
-                                    <span className="text-sm text-blueGray-400">Friends</span>
-                                </div>
-                                <div className="mr-4 p-3 text-center">
-                                    <span className="text-xl font-bold block uppercase tracking-wide text-blueGray-600">
-                                        10
-                                    </span>
-                                    <span className="text-sm text-blueGray-400">Photos</span>
-                                </div>
-                                <div className="lg:mr-4 p-3 text-center">
-                                    <span className="text-xl font-bold block uppercase tracking-wide text-blueGray-600">
-                                        89
-                                    </span>
-                                    <span className="text-sm text-blueGray-400">Comments</span>
-                                </div>
                             </div>
                         </div>
                     </div>
                     <div className="text-center mt-12">
                         <h3 className="text-xl font-semibold leading-normal mb-2 text-blueGray-700">
-                            Name
+                            {/* @ts-ignore */}
+                            {session?.user.name}
                         </h3>
                         <div className="text-sm leading-normal mt-0 mb-2 text-blueGray-400 font-bold uppercase">
                             <i className="fas fa-map-marker-alt mr-2 text-lg text-blueGray-400"></i>{" "}
                         </div>
                         <div className="mb-2 text-blueGray-600 mt-10">
                             <i className="fas fa-briefcase mr-2 text-lg text-blueGray-400"></i>
-                            USERTYPE
+                            {/* @ts-ignore */}
+                            {session?.user.usertype}
                         </div>
                         <div className="mb-2 text-blueGray-600">
                             <i className="fas fa-university mr-2 text-lg text-blueGray-400"></i>
-                            Random user
+                            {/* @ts-ignore */}
+                            {session?.user.username}
                         </div>
                     </div>
                     <div className="mt-10 py-10 border-t border-blueGray-200 text-center">
-                        <div className="flex flex-wrap justify-center">
-                            <div className="w-full lg:w-9/12 px-4">
-                                <p className="mb-4 text-lg leading-relaxed text-blueGray-700">
-                                    An artist of considerable range, Jenna the name taken by
-                                    Melbourne-raised, Brooklyn-based Nick Murphy writes, performs
-                                    and records all of his own music, giving it a warm, intimate
-                                    feel with a solid groove structure. An artist of considerable
-                                    range.
-                                </p>
-                                <a
-                                    href="#pablo"
-                                    className="font-normal text-lightBlue-500"
-                                    onClick={e => e.preventDefault()}
-                                >
-                                    Show more
-                                </a>
-                            </div>
-                        </div>
+                        <Formik
+                            initialValues={{ oldpassword: "", password: "" }}
+                            onSubmit={async (values, { setErrors }) => {
+                                const responce = await fetch(
+                                    `${process.env.NEXT_PUBLIC_SERVER_ENDPOINT2}/auth/api/change-password`,
+                                    {
+                                        method: "PUT",
+                                        credentials: "include",
+                                        headers: {
+                                            "Content-Type": "application/json",
+                                            Authorization: accessToken as string,
+                                        },
+                                        body: JSON.stringify({
+                                            oldpassword: values.oldpassword,
+                                            password: values.password,
+                                        }),
+                                    }
+                                );
+                                // console.log(JSON.stringify(values) + selectedClient);
+                                const respp = await responce.json();
+                                respp.errors;
+                                if (respp.errors) {
+                                    setErrors({
+                                        password: respp.errors[0].msg,
+                                    });
+                                }
+                                if (respp.success === false) {
+                                    setErrors({
+                                        password: respp.message,
+                                    });
+                                }
+                                if (respp.success === true) {
+                                    toast({
+                                        duration: 3000,
+                                        isClosable: false,
+                                        // @ts-ignore
+                                        title: respp.message,
+                                        status: "success",
+                                        position: "top",
+                                    });
+                                }
+                            }}
+                        >
+                            {({ isSubmitting }) => (
+                                <Form>
+                                    <h6 className="text-blueGray-400 text-sm mt-3 mb-6 font-bold uppercase">
+                                        Change password
+                                    </h6>
+                                    <div className="flex flex-wrap">
+                                        <div className="w-full lg:w-6/12 px-4">
+                                            <div className="relative w-full mb-3">
+                                                <InputField
+                                                    name="oldpassword"
+                                                    placeholder="Current password"
+                                                    label="Current Password"
+                                                    type={"password"}
+                                                    passwordField={true}
+                                                    required
+                                                    minLength={6}
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="w-full lg:w-6/12 px-4">
+                                            <div className="relative w-full mb-3">
+                                                <InputField
+                                                    name="password"
+                                                    placeholder="New password"
+                                                    label="New Password"
+                                                    type={"password"}
+                                                    passwordField={true}
+                                                    required
+                                                    minLength={6}
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <hr className="mt-6 border-b-1 border-blueGray-300" />
+                                    <div className="flex flex-wrap mt-5 items-center justify-center">
+                                        <Button
+                                            rounded={0}
+                                            mt={6}
+                                            bg={"#040505"}
+                                            color={"white"}
+                                            _hover={{
+                                                bg: "green.500",
+                                            }}
+                                            type="submit"
+                                            isLoading={isSubmitting}
+                                        >
+                                            Save
+                                        </Button>
+                                    </div>
+                                </Form>
+                            )}
+                        </Formik>
                     </div>
                 </div>
             </div>

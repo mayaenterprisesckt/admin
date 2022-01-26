@@ -51,7 +51,11 @@ const MyApp = ({
     return (
         <SessionProvider session={session} refetchInterval={5 * 60}>
             <CacheProvider value={emotionCache}>
-                <ThemeProvider attribute="class">
+                <ThemeProvider
+                    attribute="class"
+                    storageKey="chakra-ui-color-mode"
+                    defaultTheme="light"
+                >
                     <ChakraProvider theme={customTheme}>
                         <Head>
                             <meta

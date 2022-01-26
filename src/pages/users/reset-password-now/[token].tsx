@@ -56,7 +56,7 @@ function ResetPasswordForm({ token }: { token: string }): JSX.Element {
                                 setMessage(respp.message);
                                 setlink(true);
                             } else {
-                                router.push("/login");
+                                router.push("/auth/login");
                             }
 
                             // console.log(responce);
